@@ -5,6 +5,7 @@ import os
 import pathlib
 import queue
 import re
+import shutil
 import subprocess
 import sys
 import threading
@@ -25,6 +26,7 @@ def _run_git_cmd(cmd):
     # when running git status commands we do not want to acquire locks running command like git status
     denv = dict(XSH.env.detype())
     denv.update({"GIT_OPTIONAL_LOCKS": "0"})
+    cmd[0] = shutil.which(cmd[0])
     return subprocess.check_output(cmd, env=denv, stderr=subprocess.DEVNULL)
 
 
