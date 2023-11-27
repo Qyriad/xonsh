@@ -532,9 +532,20 @@ def main_xonsh(args):
                 env.update(make_args_env())  # $ARGS is not sys.argv
                 env["XONSH_SOURCE"] = path
                 shell.ctx.update({"__file__": args.file, "__name__": "__main__"})
-                exc_info = run_script_with_cache(
-                    args.file, shell.execer, glb=shell.ctx, loc=None, mode="exec"
-                )
+                try:
+                    exc_info = run_script_with_cache(
+                        args.file, shell.execer, glb=shell.ctx, loc=None, mode="exec"
+                    )
+                except Exception:
+                    print_color(
+                        "{RED}You may be attempting to run a non-xonsh script! "
+                        "{RESET}If you are trying to execute shebang-less "
+                        "script another language, then please use that "
+                        "language's command. For example, {GREEN}bash "
+                        f"{args.file}{{RESET}}",
+                        file=sys.stderr,
+                    )
+                    raise
             else:
                 print(f"xonsh: {args.file}: No such file or directory.")
                 exit_code = 1
